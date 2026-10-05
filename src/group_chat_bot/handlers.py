@@ -1,19 +1,19 @@
-from aiogram import html, Router
-from aiogram.filters import CommandStart
+import logging
+
+from aiogram import Router, Bot
 from aiogram.types import Message
 
+from .decide import should_reply
+from .storage import save_message
+
 router = Router()
-
-
-@router.message(CommandStart())
-async def command_start_handler(message: Message) -> None:
-    name = message.from_user.full_name if message.from_user else "User"
-    await message.answer(f"Hello, {html.bold(name)}!")
+logger = logging.getLogger(__name__)
 
 
 @router.message()
-async def echo_handler(message: Message) -> None:
-    try:
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        message.answer("Nice try!")
+async def message_handler(message: Message, bot: Bot) -> None:
+    save_message(message)
+
+    bot_user = await bot.me()
+    if should_reply(message, bot_user):
+        await message.answer("Hello?")
