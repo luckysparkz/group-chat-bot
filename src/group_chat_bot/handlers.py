@@ -6,6 +6,8 @@ from aiogram.types import Message
 
 from .decide import should_reply
 from .storage import save_message
+from .llm import generate_reply
+from .storage import describe
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -19,4 +21,7 @@ async def message_handler(message: Message, bot: Bot) -> None:
 
     bot_user = await bot.me()
     if should_reply(message, bot_user):
-        await message.answer("Hello?")
+        prompt = describe(message)
+        text = await generate_reply(prompt)
+        if text:
+            await message.reply(text)
