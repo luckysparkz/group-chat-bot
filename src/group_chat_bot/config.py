@@ -4,6 +4,8 @@ from .exceptions import MissingEnvironmentVariableError
 
 REPLY_CHANCE = 0.10
 MODEL = "google/gemini-3.7-flash"
+DB_PATH = "chat.db"
+CONTEXT_LIMIT = 50
 
 
 def load_env(key: str) -> str:
